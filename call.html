@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zip Code Storage</title>
+</head>
+<body>
+    <h1>Zip Code Storage</h1>
+
+    <h2>Store Zip Code Data</h2>
+    <form id="storeForm">
+        <label for="zip_code">Zip Code:</label>
+        <input type="text" id="zip_code" name="zip_code" required>
+        <br>
+        <label for="city">City:</label>
+        <input type="text" id="city" name="city">
+        <br>
+        <label for="state">State:</label>
+        <input type="text" id="state" name="state">
+        <br>
+        <button type="submit">Store Data</button>
+    </form>
+
+    <h2>Retrieve Zip Code Data</h2>
+    <form id="retrieveForm">
+        <label for="retrieve_zip_code">Enter Zip Code:</label>
+        <input type="text" id="retrieve_zip_code" name="retrieve_zip_code" required>
+        <br>
+        <button type="button" onclick="retrieveData()">Retrieve Data</button>
+    </form>
+
+    <div id="result"></div>
+
+    <script>
+        function storeData() {
+            const formData = new FormData(document.getElementById('storeForm'));
+            fetch('/store', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(Object.fromEntries(formData))
+            })
+            .then(response => response.json())
+            .then(data => console.log(data))
+            .catch(error => console.error('Error:', error));
+        }
+
+        function retrieveData() {
+            const zipCode = document.getElementById('retrieve_zip_code').value;
+            fetch(`/retrieve/${zipCode}`)
+            .then(response => response.json())
+            .then(data => {
+                const resultDiv = document.getElementById('result');
+                resultDiv.innerHTML = `<p>City: ${data.city}</p><p>State: ${data.state}</p>`;
+            })
+            .catch(error => console.error('Error:', error));
+        }
+
+        document.getElementById('storeForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            storeData();
+        });
+    </script>
+</body>
+</html>
